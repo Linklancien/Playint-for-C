@@ -19,7 +19,7 @@ typedef struct {
 
 typedef struct {
 	Interaction *listpointer; /* state/id */
-	int idstart;
+	unsigned int idstart;
 	unsigned int idend;
 	unsigned int cap;
 }TodoList;
@@ -87,30 +87,29 @@ unsigned int *playint_Context_keyslinks_get_by_linked_name(void *context, char *
 /* todolist */
 
 void playint_Context_todolist_add(playint_Context *context, int id_pressed){
+    unsigned int old_cap;
+    unsigned int i;
 
-    if (context->todolist.idstart < 0){
-        context->todolist.idstart = 0;
-        context->todolist.idend = 0;
-    }
-    else if (context->todolist.idstart < context->todolist.idend){
-        if (context->todolist.idend + 1 < context->todolist.cap){
+    if (context->todolist.idstart != context->todolist.idend){
+        if (context->todolist.idend + 1 == context->todolist.cap){
+            context->todolist.cap *= 2;
+            context->todolist.listpointer = realloc(context->todolist.listpointer, context->todolist.cap);
             context->todolist.idend += 1;
         }
-        else if (0 < context->todolist.idstart){
-            context->todolist.idend = 0;
-        }else{
-            /* NEED LARGER CAP */
-        }
-    }
-    else{
-        if (context->todolist.idend + 1 < context->todolist.idstart){
-            context->todolist.idend += 1;
+        else if (context->todolist.idend + 1 == context->todolist.idstart){
+            old_cap = context->todolist.cap;
+            context->todolist.cap *= 2;
+            context->todolist.listpointer = realloc(context->todolist.listpointer, context->todolist.cap);
+            /* change the place of the elements between 0 and idend to old_cap and old_cap + idend */
+            for (i = 0; i < context->todolist.idend; i++){
+                context->todolist.listpointer[i+old_cap] = context->todolist.listpointer[i] ;
+            }
+            context->todolist.idend += old_cap + 1;
         }
         else{
-            /* NEED LARGER CAP & move of the first */
+            context->todolist.idend += 1;
         }
     }
-
 
     context->todolist.listpointer[context->todolist.idend].type = context->state;
     context->todolist.listpointer[context->todolist.idend].id = id_pressed;
