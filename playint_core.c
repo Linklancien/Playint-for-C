@@ -8,7 +8,7 @@ typedef struct{
 
 enum Type{
     activated,
-    change,
+    changed,
     count,
 };
 
@@ -20,7 +20,7 @@ typedef struct {
 typedef struct {
 	Interaction *listpointer; /* state/id */
 	unsigned int idstart;
-	unsigned int idend;
+	unsigned int idnext;
 	unsigned int cap;
 }TodoList;
 
@@ -90,30 +90,44 @@ void playint_Context_todolist_add(playint_Context *context, int id_pressed){
     unsigned int old_cap;
     unsigned int i;
 
-    if (context->todolist.idstart != context->todolist.idend){
-        if (context->todolist.idend + 1 == context->todolist.cap){
+    if (context->todolist.idstart != context->todolist.idnext){
+        if (context->todolist.idnext + 1 == context->todolist.cap){
             context->todolist.cap *= 2;
             context->todolist.listpointer = realloc(context->todolist.listpointer, context->todolist.cap);
-            context->todolist.idend += 1;
+            context->todolist.idnext += 1;
         }
-        else if (context->todolist.idend + 1 == context->todolist.idstart){
+        else if (context->todolist.idnext + 1 == context->todolist.idstart){
             old_cap = context->todolist.cap;
             context->todolist.cap *= 2;
             context->todolist.listpointer = realloc(context->todolist.listpointer, context->todolist.cap);
-            /* change the place of the elements between 0 and idend to old_cap and old_cap + idend */
-            for (i = 0; i < context->todolist.idend; i++){
+            /* change the place of the elements between 0 and idnext to old_cap and old_cap + idnext */
+            for (i = 0; i < context->todolist.idnext; i++){
                 context->todolist.listpointer[i+old_cap] = context->todolist.listpointer[i] ;
             }
-            context->todolist.idend += old_cap + 1;
+            context->todolist.idnext += old_cap + 1;
         }
         else{
-            context->todolist.idend += 1;
+            context->todolist.idnext += 1;
         }
     }
 
-    context->todolist.listpointer[context->todolist.idend].type = context->state;
-    context->todolist.listpointer[context->todolist.idend].id = id_pressed;
+    context->todolist.listpointer[context->todolist.idnext].type = context->state;
+    context->todolist.listpointer[context->todolist.idnext].id = id_pressed;
 };
 
-void playint_Context_todolist_do_one(void *context);
-void playint_Context_todolist_do_all(void *context);
+void playint_Context_todolist_do_one(playint_Context *context);
+void playint_Context_todolist_do_all(playint_Context *context){
+    unsigned int i;
+
+    if (context->todolist.idstart <= context->todolist.idnext){
+        for (i = context->todolist.idstart; i<=context->todolist.idnext ; i++){
+        }
+    }
+    else{
+        for (i = context->todolist.idstart; i < context->todolist.cap ; i++){}
+        for (i = 0; i<=context->todolist.idnext ; i++){}
+    }
+
+    context->todolist.idstart = 0;
+    context->todolist.idnext = 0;
+}
