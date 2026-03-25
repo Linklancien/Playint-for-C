@@ -90,29 +90,25 @@ void playint_Context_todolist_add(playint_Context *context, int id_pressed){
     unsigned int old_cap;
     unsigned int i;
 
-    if (context->todolist.idstart != context->todolist.idnext){
-        if (context->todolist.idnext + 1 == context->todolist.cap){
-            context->todolist.cap *= 2;
-            context->todolist.listpointer = realloc(context->todolist.listpointer, context->todolist.cap);
-            context->todolist.idnext += 1;
-        }
-        else if (context->todolist.idnext + 1 == context->todolist.idstart){
-            old_cap = context->todolist.cap;
-            context->todolist.cap *= 2;
-            context->todolist.listpointer = realloc(context->todolist.listpointer, context->todolist.cap);
-            /* change the place of the elements between 0 and idnext to old_cap and old_cap + idnext */
-            for (i = 0; i < context->todolist.idnext; i++){
-                context->todolist.listpointer[i+old_cap] = context->todolist.listpointer[i] ;
-            }
-            context->todolist.idnext += old_cap + 1;
-        }
-        else{
-            context->todolist.idnext += 1;
-        }
-    }
-
     context->todolist.listpointer[context->todolist.idnext].type = context->state;
     context->todolist.listpointer[context->todolist.idnext].id = id_pressed;
+
+    if (context->todolist.idnext + 1 == context->todolist.cap){
+        context->todolist.cap *= 2;
+        context->todolist.listpointer = realloc(context->todolist.listpointer, context->todolist.cap);
+    }
+    else if (context->todolist.idnext + 1 == context->todolist.idstart){
+        old_cap = context->todolist.cap;
+        context->todolist.cap *= 2;
+        context->todolist.listpointer = realloc(context->todolist.listpointer, context->todolist.cap);
+        /* change the place of the elements between 0 and idnext to old_cap and old_cap + idnext */
+        for (i = 0; i < context->todolist.idnext; i++){
+            context->todolist.listpointer[i+old_cap] = context->todolist.listpointer[i] ;
+        }
+        context->todolist.idnext += old_cap;
+    }
+    context->todolist.idnext += 1;
+
 };
 
 void playint_Context_todolist_do_one(playint_Context *context);
