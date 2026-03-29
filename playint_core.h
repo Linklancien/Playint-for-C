@@ -26,6 +26,7 @@ unsigned int *playint_Context_keyslinks_get_by_linked_name(void *context, char *
 
 /* todolist */
 
+unsigned int playint_Context_todolist_get_len(void *context);
 void playint_Context_todolist_add(void *context, int id_pressed);
 void playint_Context_todolist_do_one(void *context);
 void playint_Context_todolist_do_all(void *context);

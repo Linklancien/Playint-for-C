@@ -1,49 +1,56 @@
 #include <stdlib.h>
-typedef void(*playint_UserFunction)(void) ;
+typedef void(*playint_UserFunction)(void*) ;
 
 typedef struct{
     char *name;
-    playint_UserFunction *function_pointer_list;
+    playint_UserFunction function_pointer_list;
 }playint_Actions;
 
-enum Type{
+enum playint_InteractionType{
     activated,
     changed,
     count,
 };
 
 typedef struct {
-    enum Type type;
-    unsigned int id;
-}Interaction;
+    enum playint_InteractionType type;
+    unsigned int id_pressed;
+}playint_Interaction;
 
 typedef struct {
-	Interaction *listpointer; /* state/id */
+	playint_Interaction *list_interaction; /* state/id */
+	unsigned int *new_action;
 	unsigned int idstart;
 	unsigned int idnext;
 	unsigned int cap;
-}TodoList;
+}playint_TodoList;
 
 typedef struct{
     void *userpointer; /* the pointer used to call the user functions */
-    enum Type state;
+    enum playint_InteractionType state;
     playint_Actions *actions;
     unsigned int actions_len;
     unsigned int *keyslinks;
     unsigned int keyslinks_len;
-    TodoList todolist;
+    playint_TodoList todolist;
 }playint_Context;
 
 /* playint context */
 
 void* playint_Context_init(void *userpointer, unsigned int keyslinks_len, unsigned int todolist_cap){
-    playint_Context* context;
-    unsigned int* keyslinks;
+    playint_Context *context;
+    unsigned int *keyslinks;
+    playint_Interaction *list_interaction;
+    unsigned int *new_action;
 
     keyslinks = malloc((sizeof *keyslinks)*keyslinks_len);
+    list_interaction = malloc((sizeof *list_interaction)*todolist_cap);
+    new_action = malloc((sizeof *new_action)*todolist_cap);
 
     context->userpointer = userpointer;
     context->keyslinks = keyslinks;
+    context->todolist.list_interaction = list_interaction;
+    context->todolist.new_action = new_action;
     context->todolist.cap = todolist_cap;
 
     return context;
@@ -57,7 +64,7 @@ void playint_Context_free(playint_Context *context){
     free(context->userpointer);
     free(context->actions);
     free(context->keyslinks);
-    free(context->todolist.listpointer);
+    free(context->todolist.list_interaction);
     free(context);
 };
 
@@ -86,24 +93,35 @@ unsigned int *playint_Context_keyslinks_get_by_linked_name(void *context, char *
 
 /* todolist */
 
+unsigned int playint_Context_todolist_get_len(playint_Context *context){
+    unsigned int len;
+    if (context->todolist.idstart <= context->todolist.idnext){
+        len = context->todolist.idnext - context->todolist.idstart;
+    }
+    else{
+        len = context->todolist.cap - context->todolist.idnext + context->todolist.idstart;
+    }
+    return len;
+}
+
 void playint_Context_todolist_add(playint_Context *context, int id_pressed){
     unsigned int old_cap;
     unsigned int i;
 
-    context->todolist.listpointer[context->todolist.idnext].type = context->state;
-    context->todolist.listpointer[context->todolist.idnext].id = id_pressed;
+    context->todolist.list_interaction[context->todolist.idnext].type = context->state;
+    context->todolist.list_interaction[context->todolist.idnext].id_pressed = id_pressed;
 
     if (context->todolist.idnext + 1 == context->todolist.cap){
         context->todolist.cap *= 2;
-        context->todolist.listpointer = realloc(context->todolist.listpointer, context->todolist.cap);
+        context->todolist.list_interaction = realloc(context->todolist.list_interaction, context->todolist.cap);
     }
     else if (context->todolist.idnext + 1 == context->todolist.idstart){
         old_cap = context->todolist.cap;
         context->todolist.cap *= 2;
-        context->todolist.listpointer = realloc(context->todolist.listpointer, context->todolist.cap);
+        context->todolist.list_interaction = realloc(context->todolist.list_interaction, context->todolist.cap);
         /* change the place of the elements between 0 and idnext to old_cap and old_cap + idnext */
         for (i = 0; i < context->todolist.idnext; i++){
-            context->todolist.listpointer[i+old_cap] = context->todolist.listpointer[i] ;
+            context->todolist.list_interaction[i+old_cap] = context->todolist.list_interaction[i] ;
         }
         context->todolist.idnext += old_cap;
     }
@@ -111,19 +129,35 @@ void playint_Context_todolist_add(playint_Context *context, int id_pressed){
 
 };
 
-void playint_Context_todolist_do_one(playint_Context *context);
+void playint_Context_todolist_do_one(playint_Context *context){
+    playint_Interaction interaction;
+    unsigned int id_action;
+    if (context->todolist.idstart != context->todolist.idnext){
+        interaction = context->todolist.list_interaction[context->todolist.idstart];
+        context->todolist.idstart += 1;
+
+        if (interaction.type == activated){
+            id_action = context->keyslinks[interaction.id_pressed];
+            context->actions[id_action].function_pointer_list(context->userpointer);
+        }
+        else if (interaction.type == changed){
+
+        }
+    }
+}
+
 void playint_Context_todolist_do_all(playint_Context *context){
     unsigned int i;
 
-    if (context->todolist.idstart <= context->todolist.idnext){
-        for (i = context->todolist.idstart; i<=context->todolist.idnext ; i++){
+    if (context->todolist.idstart < context->todolist.idnext){
+        for (i = context->todolist.idstart; i < context->todolist.idnext ; i++){
         }
     }
     else{
         for (i = context->todolist.idstart; i < context->todolist.cap ; i++){}
-        for (i = 0; i<=context->todolist.idnext ; i++){}
+        for (i = 0; i < context->todolist.idnext ; i++){}
     }
 
     context->todolist.idstart = 0;
-    context->todolist.idnext = 0;
+    context->todolist.idnext = 1;
 }
