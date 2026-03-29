@@ -19,7 +19,7 @@ typedef struct {
 
 typedef struct {
 	playint_Interaction *list_interaction; /* state/id */
-	unsigned int *new_action;
+	unsigned int *list_new_actions_linked;
 	unsigned int idstart;
 	unsigned int idnext;
 	unsigned int cap;
@@ -30,6 +30,7 @@ typedef struct{
     enum playint_InteractionType state;
     playint_Actions *actions;
     unsigned int actions_len;
+    unsigned int new_action;
     unsigned int *keyslinks;
     unsigned int keyslinks_len;
     playint_TodoList todolist;
@@ -41,20 +42,20 @@ void* playint_Context_init(void *userpointer, unsigned int keyslinks_len, unsign
     playint_Context *context;
     unsigned int *keyslinks;
     playint_Interaction *list_interaction;
-    unsigned int *new_action;
+    unsigned int *list_new_actions_linked;
 
     keyslinks = malloc((sizeof *keyslinks)*keyslinks_len);
     list_interaction = malloc((sizeof *list_interaction)*todolist_cap);
-    new_action = malloc((sizeof *new_action)*todolist_cap);
+    list_new_actions_linked = malloc((sizeof *list_new_actions_linked)*todolist_cap);
 
     context->userpointer = userpointer;
     context->keyslinks = keyslinks;
     context->todolist.list_interaction = list_interaction;
-    context->todolist.new_action = new_action;
+    context->todolist.list_new_actions_linked = list_new_actions_linked;
     context->todolist.cap = todolist_cap;
 
     return context;
-};
+}
 
 void *playint_Context_init_from(char *path);
 void playint_Context_set_from(void *context, char *path);
@@ -66,7 +67,7 @@ void playint_Context_free(playint_Context *context){
     free(context->keyslinks);
     free(context->todolist.list_interaction);
     free(context);
-};
+}
 
 
 void playint_Context_change_userpointer(playint_Context *context, void *userpointer){
@@ -83,7 +84,7 @@ unsigned int *playint_Context_action_get_by_name(void *context, char *name);
 
 void playint_Context_keyslinks_set(playint_Context *context, unsigned int keyslinks_len){
     context->keyslinks = realloc(context->keyslinks, keyslinks_len);
-};
+}
 
 void playint_Context_keyslinks_change_at(void *context, unsigned int id);
 void playint_Context_keyslinks_change_all(void *context);
@@ -93,23 +94,9 @@ unsigned int *playint_Context_keyslinks_get_by_linked_name(void *context, char *
 
 /* todolist */
 
-unsigned int playint_Context_todolist_get_len(playint_Context *context){
-    unsigned int len;
-    if (context->todolist.idstart <= context->todolist.idnext){
-        len = context->todolist.idnext - context->todolist.idstart;
-    }
-    else{
-        len = context->todolist.cap - context->todolist.idnext + context->todolist.idstart;
-    }
-    return len;
-}
-
-void playint_Context_todolist_add(playint_Context *context, int id_pressed){
+void playint_Context_todolist_change_idnext(playint_Context *context){
     unsigned int old_cap;
     unsigned int i;
-
-    context->todolist.list_interaction[context->todolist.idnext].type = context->state;
-    context->todolist.list_interaction[context->todolist.idnext].id_pressed = id_pressed;
 
     if (context->todolist.idnext + 1 == context->todolist.cap){
         context->todolist.cap *= 2;
@@ -126,8 +113,28 @@ void playint_Context_todolist_add(playint_Context *context, int id_pressed){
         context->todolist.idnext += old_cap;
     }
     context->todolist.idnext += 1;
+}
 
-};
+unsigned int playint_Context_todolist_get_len(playint_Context *context){
+    unsigned int len;
+    if (context->todolist.idstart <= context->todolist.idnext){
+        len = context->todolist.idnext - context->todolist.idstart;
+    }
+    else{
+        len = context->todolist.cap - context->todolist.idnext + context->todolist.idstart;
+    }
+    return len;
+}
+
+void playint_Context_todolist_add(playint_Context *context, int id_pressed){
+    context->todolist.list_interaction[context->todolist.idnext].type = context->state;
+    context->todolist.list_interaction[context->todolist.idnext].id_pressed = id_pressed;
+    if (context->state == changed){
+        context->todolist.list_new_actions_linked[context->todolist.idnext] = context->new_action;
+    }
+
+    playint_Context_todolist_change_idnext(context);
+}
 
 void playint_Context_todolist_do_one(playint_Context *context){
     playint_Interaction interaction;
