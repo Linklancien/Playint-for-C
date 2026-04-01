@@ -175,6 +175,7 @@ void playint_Context_todolist_add(playint_Context *context, int id_pressed){
 void playint_Context_todolist_do_one(playint_Context *context){
     playint_Interaction interaction;
     unsigned int id_action;
+
     if (context->todolist.idstart != context->todolist.idnext){
         interaction = context->todolist.list_interaction[context->todolist.idstart];
         context->todolist.idstart += 1;
@@ -184,23 +185,54 @@ void playint_Context_todolist_do_one(playint_Context *context){
             context->actions[id_action].function_pointer_list(context->userpointer);
         }
         else if (interaction.type == changed){
-
+            playint_Context_keyslinks_change_at(context, interaction.id_pressed);
         }
     }
 }
 
 void playint_Context_todolist_do_all(playint_Context *context){
+    playint_Interaction interaction;
+    unsigned int id_action;
     unsigned int i;
 
     if (context->todolist.idstart < context->todolist.idnext){
         for (i = context->todolist.idstart; i < context->todolist.idnext ; i++){
+            interaction = context->todolist.list_interaction[i];
+
+            if (interaction.type == activated){
+                id_action = context->keyslinks[interaction.id_pressed];
+                context->actions[id_action].function_pointer_list(context->userpointer);
+            }
+            else if (interaction.type == changed){
+                playint_Context_keyslinks_change_at(context, interaction.id_pressed);
+            }
         }
     }
     else{
-        for (i = context->todolist.idstart; i < context->todolist.cap ; i++){}
-        for (i = 0; i < context->todolist.idnext ; i++){}
+        for (i = context->todolist.idstart; i < context->todolist.cap ; i++){
+            interaction = context->todolist.list_interaction[i];
+
+            if (interaction.type == activated){
+                id_action = context->keyslinks[interaction.id_pressed];
+                context->actions[id_action].function_pointer_list(context->userpointer);
+            }
+            else if (interaction.type == changed){
+                playint_Context_keyslinks_change_at(context, interaction.id_pressed);
+            }
+        }
+        for (i = 0; i < context->todolist.idnext ; i++){
+            interaction = context->todolist.list_interaction[i];
+
+            if (interaction.type == activated){
+                id_action = context->keyslinks[interaction.id_pressed];
+                context->actions[id_action].function_pointer_list(context->userpointer);
+            }
+            else if (interaction.type == changed){
+                playint_Context_keyslinks_change_at(context, interaction.id_pressed);
+            }
+        }
     }
 
     context->todolist.idstart = 0;
-    context->todolist.idnext = 1;
+    context->todolist.idnext = 0;
 }
