@@ -12,12 +12,14 @@ void playint_Context_change_userpointer(void *context, void *userpointer);
 /* actions */
 
 void playint_Context_action_add(void *context, char *name, playint_UserFunction function_pointer);
-unsigned int playint_Context_action_get_by_id(void *context, unsigned int id);
-unsigned int *playint_Context_action_get_by_name(void *context, char *name);
+char *playint_Context_action_get_name_by_id(void *context, unsigned int id);
+unsigned int *playint_Context_action_get_id_by_name(void *context, char *name);
+void playint_Context_change_action_to_link_by_id(void *context, unsigned int id_action_to_link);
+void playint_Context_change_action_to_link_by_name(void *context, char *name);
 
 /* keyslinks */
 
-void playint_Context_keyslinks_set(void *context, unsigned int keyslinks_len);
+void playint_Context_keyslinks_len_set(void *context, unsigned int keyslinks_len);
 void playint_Context_keyslinks_change_at(void *context, unsigned int id);
 void playint_Context_keyslinks_change_all(void *context);
 unsigned int playint_Context_keyslinks_get_by_id(void *context, unsigned int id);
