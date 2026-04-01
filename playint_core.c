@@ -76,7 +76,12 @@ void playint_Context_change_userpointer(playint_Context *context, void *userpoin
 
 /* actions */
 
-void playint_Context_action_add(playint_Context *context, char *name, playint_UserFunction function_pointer);
+void playint_Context_action_add(playint_Context *context, char *name, playint_UserFunction function_pointer){
+    context->actions = realloc(context->actions, sizeof(*context->actions)*context->actions_len);
+    context->actions[context->actions_len].name = name;
+    context->actions[context->actions_len].function_pointer_list = function_pointer;
+    context->actions_len += 1;
+}
 
 char *playint_Context_action_get_name_by_id(playint_Context *context, unsigned int id){
     if (context->actions_len <=id){
