@@ -121,7 +121,10 @@ void playint_Context_keyslinks_len_set(playint_Context *context, unsigned int ke
     context->keyslinks_len = keyslinks_len;
 }
 
-void playint_Context_keyslinks_change_at(playint_Context *context, unsigned int id);
+void playint_Context_keyslinks_change_at(playint_Context *context, unsigned int id_keyslinks, unsigned int id_new_action_linked){
+    context->keyslinks[id_keyslinks] = id_new_action_linked;
+}
+
 void playint_Context_keyslinks_change_all(playint_Context *context);
 unsigned int playint_Context_keyslinks_get_by_id(playint_Context *context, unsigned int id);
 unsigned int *playint_Context_keyslinks_get_by_linked_id(playint_Context *context, unsigned int linked_id);
@@ -178,15 +181,15 @@ void playint_Context_todolist_do_one(playint_Context *context){
 
     if (context->todolist.idstart != context->todolist.idnext){
         interaction = context->todolist.list_interaction[context->todolist.idstart];
-        context->todolist.idstart += 1;
 
         if (interaction.type == activated){
             id_action = context->keyslinks[interaction.id_pressed];
             context->actions[id_action].function_pointer_list(context->userpointer);
         }
         else if (interaction.type == changed){
-            playint_Context_keyslinks_change_at(context, interaction.id_pressed);
+            playint_Context_keyslinks_change_at(context, interaction.id_pressed, context->todolist.list_new_actions_linked[context->todolist.idstart]);
         }
+        context->todolist.idstart += 1;
     }
 }
 
@@ -204,7 +207,7 @@ void playint_Context_todolist_do_all(playint_Context *context){
                 context->actions[id_action].function_pointer_list(context->userpointer);
             }
             else if (interaction.type == changed){
-                playint_Context_keyslinks_change_at(context, interaction.id_pressed);
+                playint_Context_keyslinks_change_at(context, interaction.id_pressed, context->todolist.list_new_actions_linked[i]);
             }
         }
     }
@@ -217,7 +220,7 @@ void playint_Context_todolist_do_all(playint_Context *context){
                 context->actions[id_action].function_pointer_list(context->userpointer);
             }
             else if (interaction.type == changed){
-                playint_Context_keyslinks_change_at(context, interaction.id_pressed);
+                playint_Context_keyslinks_change_at(context, interaction.id_pressed, context->todolist.list_new_actions_linked[i]);
             }
         }
         for (i = 0; i < context->todolist.idnext ; i++){
@@ -228,7 +231,7 @@ void playint_Context_todolist_do_all(playint_Context *context){
                 context->actions[id_action].function_pointer_list(context->userpointer);
             }
             else if (interaction.type == changed){
-                playint_Context_keyslinks_change_at(context, interaction.id_pressed);
+                playint_Context_keyslinks_change_at(context, interaction.id_pressed, context->todolist.list_new_actions_linked[i]);
             }
         }
     }
