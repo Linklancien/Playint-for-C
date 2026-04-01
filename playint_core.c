@@ -125,10 +125,9 @@ void playint_Context_keyslinks_change_at(playint_Context *context, unsigned int 
     context->keyslinks[id_keyslinks] = id_new_action_linked;
 }
 
-void playint_Context_keyslinks_change_all(playint_Context *context);
-unsigned int playint_Context_keyslinks_get_by_id(playint_Context *context, unsigned int id);
-unsigned int *playint_Context_keyslinks_get_by_linked_id(playint_Context *context, unsigned int linked_id);
-unsigned int *playint_Context_keyslinks_get_by_linked_name(playint_Context *context, char *linked_name);
+unsigned int playint_Context_keyslinks_get_linked_by_id(playint_Context *context, unsigned int id);
+unsigned int *playint_Context_keyslinks_get_id_by_linked_id(playint_Context *context, unsigned int linked_id);
+unsigned int *playint_Context_keyslinks_get_id_by_linked_name(playint_Context *context, char *linked_name);
 
 /* todolist */
 
