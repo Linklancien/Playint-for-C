@@ -69,6 +69,13 @@ void playint_Context_free(playint_Context *context){
     free(context);
 }
 
+void playint_Context_change_state_activated(playint_Context *context){
+    context->state = activated;
+}
+
+void playint_Context_change_state_changed(playint_Context *context){
+    context->state = changed;
+}
 
 void playint_Context_change_userpointer(playint_Context *context, void *userpointer){
     context->userpointer=userpointer;
