@@ -121,11 +121,14 @@ void playint_Context_keyslinks_len_set(playint_Context *context, unsigned int ke
     context->keyslinks_len = keyslinks_len;
 }
 
-void playint_Context_keyslinks_change_at(playint_Context *context, unsigned int id_keyslinks, unsigned int id_new_action_linked){
-    context->keyslinks[id_keyslinks] = id_new_action_linked;
+void playint_Context_keyslinks_change_at(playint_Context *context, unsigned int keyslinks_id, unsigned int new_action_linked_id){
+    context->keyslinks[keyslinks_id] = new_action_linked_id;
 }
 
-unsigned int playint_Context_keyslinks_get_linked_by_id(playint_Context *context, unsigned int id);
+unsigned int playint_Context_keyslinks_get_linked_by_id(playint_Context *context, unsigned int keyslinks_id){
+    return context->keyslinks[keyslinks_id];
+}
+
 unsigned int *playint_Context_keyslinks_get_id_by_linked_id(playint_Context *context, unsigned int linked_id);
 unsigned int *playint_Context_keyslinks_get_id_by_linked_name(playint_Context *context, char *linked_name);
 
