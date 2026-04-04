@@ -1,4 +1,4 @@
-#include "playint_core.c"
+typedef void(*playint_UserFunction)(void*) ;
 
 /* playint context */
 
@@ -7,6 +7,8 @@ void *playint_Context_init_from(char *path);
 void playint_Context_set_from(void *context, char *path);
 void playint_Context_save_to(void *context, char *path);
 void playint_Context_free(void *context);
+void playint_Context_change_state_activated(void *context);
+void playint_Context_change_state_changed(void *context);
 void playint_Context_change_userpointer(void *context, void *userpointer);
 
 /* actions */

@@ -9,7 +9,7 @@ typedef struct{
 enum playint_InteractionType{
     activated,
     changed,
-    count,
+    count
 };
 
 typedef struct {
@@ -38,12 +38,13 @@ typedef struct{
 
 /* playint context */
 
-void* playint_Context_init(void *userpointer, unsigned int keyslinks_len, unsigned int todolist_cap){
+void *playint_Context_init(void *userpointer, unsigned int keyslinks_len, unsigned int todolist_cap){
     playint_Context *context;
     unsigned int *keyslinks;
     playint_Interaction *list_interaction;
     unsigned int *list_new_actions_linked;
-
+    
+    context = malloc((sizeof( *context)*1));
     keyslinks = malloc((sizeof *keyslinks)*keyslinks_len);
     list_interaction = malloc((sizeof *list_interaction)*todolist_cap);
     list_new_actions_linked = malloc((sizeof *list_new_actions_linked)*todolist_cap);
