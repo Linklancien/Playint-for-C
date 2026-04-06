@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 typedef void(*playint_UserFunction)(void*) ;
 
@@ -22,7 +23,7 @@ typedef struct {
 	unsigned int *list_new_actions_linked;
 	unsigned int idstart;
 	unsigned int idnext;
-	unsigned int cap;
+	unsigned long cap;
 }playint_TodoList;
 
 typedef struct{
@@ -149,15 +150,19 @@ void playint_Context_todolist_change_idnext(playint_Context *context){
 
     if (context->todolist.idnext + 1 == context->todolist.cap){
         context->todolist.cap *= 2;
+        
         context->todolist.list_interaction = realloc(context->todolist.list_interaction, context->todolist.cap);
+        context->todolist.list_new_actions_linked = realloc(context->todolist.list_new_actions_linked, context->todolist.cap);
     }
     else if (context->todolist.idnext + 1 == context->todolist.idstart){
         old_cap = context->todolist.cap;
         context->todolist.cap *= 2;
         context->todolist.list_interaction = realloc(context->todolist.list_interaction, context->todolist.cap);
+        context->todolist.list_new_actions_linked = realloc(context->todolist.list_new_actions_linked, context->todolist.cap);
         /* change the place of the elements between 0 and idnext to old_cap and old_cap + idnext */
         for (i = 0; i < context->todolist.idnext; i++){
             context->todolist.list_interaction[i+old_cap] = context->todolist.list_interaction[i] ;
+            context->todolist.list_new_actions_linked[i+old_cap] = context->todolist.list_new_actions_linked[i] ;
         }
         context->todolist.idnext += old_cap;
     }
