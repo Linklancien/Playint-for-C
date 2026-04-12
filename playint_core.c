@@ -44,7 +44,7 @@ void *playint_Context_init(void *userpointer, unsigned int keyslinks_len, unsign
     unsigned int *keyslinks;
     playint_Interaction *list_interaction;
     unsigned int *list_new_actions_linked;
-    
+
     context = malloc((sizeof( *context)*1));
     keyslinks = malloc((sizeof *keyslinks)*keyslinks_len);
     list_interaction = malloc((sizeof *list_interaction)*todolist_cap);
@@ -145,20 +145,20 @@ unsigned int *playint_Context_keyslinks_get_id_by_linked_name(playint_Context *c
 
 /* local */
 void playint_Context_todolist_change_idnext(playint_Context *context){
-    unsigned int old_cap;
+    unsigned long old_cap;
     unsigned int i;
 
     if (context->todolist.idnext + 1 == context->todolist.cap){
-        context->todolist.cap *= 2;
-        
-        context->todolist.list_interaction = realloc(context->todolist.list_interaction, context->todolist.cap);
-        context->todolist.list_new_actions_linked = realloc(context->todolist.list_new_actions_linked, context->todolist.cap);
+        context->todolist.cap *= 2 ;
+
+        context->todolist.list_new_actions_linked = realloc(context->todolist.list_new_actions_linked, (sizeof *context->todolist.list_new_actions_linked)*context->todolist.cap);
+        context->todolist.list_interaction = realloc(context->todolist.list_interaction, (sizeof *context->todolist.list_interaction)*context->todolist.cap);
     }
     else if (context->todolist.idnext + 1 == context->todolist.idstart){
         old_cap = context->todolist.cap;
         context->todolist.cap *= 2;
-        context->todolist.list_interaction = realloc(context->todolist.list_interaction, context->todolist.cap);
-        context->todolist.list_new_actions_linked = realloc(context->todolist.list_new_actions_linked, context->todolist.cap);
+        context->todolist.list_new_actions_linked = realloc(context->todolist.list_new_actions_linked, (sizeof *context->todolist.list_new_actions_linked)*context->todolist.cap);
+        context->todolist.list_interaction = realloc(context->todolist.list_interaction, (sizeof *context->todolist.list_interaction)*context->todolist.cap);
         /* change the place of the elements between 0 and idnext to old_cap and old_cap + idnext */
         for (i = 0; i < context->todolist.idnext; i++){
             context->todolist.list_interaction[i+old_cap] = context->todolist.list_interaction[i] ;
