@@ -175,18 +175,15 @@ void playint_Context_todo_change_idnext(playint_Context *context){
     if (context->todolist.idnext + 1 == context->todolist.cap){
         context->todolist.cap *= 2 ;
 
-        context->todolist.new_function_linked_array = realloc(context->todolist.new_function_linked_array, (sizeof *context->todolist.new_function_linked_array)*context->todolist.cap);
         context->todolist.interaction_array = realloc(context->todolist.interaction_array, (sizeof *context->todolist.interaction_array)*context->todolist.cap);
     }
     else if (context->todolist.idnext + 1 == context->todolist.idstart){
         old_cap = context->todolist.cap;
         context->todolist.cap *= 2;
-        context->todolist.new_function_linked_array = realloc(context->todolist.new_function_linked_array, (sizeof *context->todolist.new_function_linked_array)*context->todolist.cap);
         context->todolist.interaction_array = realloc(context->todolist.interaction_array, (sizeof *context->todolist.interaction_array)*context->todolist.cap);
         /* change the place of the elements between 0 and idnext to old_cap and old_cap + idnext */
         for (i = 0; i < context->todolist.idnext; i++){
             context->todolist.interaction_array[i+old_cap] = context->todolist.interaction_array[i] ;
-            context->todolist.new_function_linked_array[i+old_cap] = context->todolist.new_function_linked_array[i] ;
         }
         context->todolist.idnext += old_cap;
     }
@@ -224,12 +221,12 @@ void playint_Context_todo_do_one(playint_Context *context){
     if (context->todolist.idstart != context->todolist.idnext){
         interaction = context->todolist.interaction_array[context->todolist.idstart];
 
-        if (interaction.type == activated){
-            id_action = context->keyslinks[interaction.id_pressed];
+        if (interaction.new_actions_linked < 0){
+            id_action = context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed];
             context->function_array[id_action].function_pointer_list(context->userpointer);
         }
-        else if (interaction.type == changed){
-            playint_Context_mode_keyslinks_change_at(context, int mode_id, interaction.id_pressed, context->todolist.new_function_linked_array[context->todolist.idstart]);
+        else{
+            context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_actions_linked;
         }
         context->todolist.idstart += 1;
     }
@@ -242,38 +239,38 @@ void playint_Context_todo_do_all(playint_Context *context){
 
     if (context->todolist.idstart < context->todolist.idnext){
         for (i = context->todolist.idstart; i < context->todolist.idnext ; i++){
-            interaction = context->todolist.interaction_array[i];
-
-            if (interaction.type == activated){
-                id_action = context->keyslinks[interaction.id_pressed];
+            interaction = context->todolist.interaction_array[context->todolist.idstart];
+    
+            if (interaction.new_actions_linked < 0){
+                id_action = context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed];
                 context->function_array[id_action].function_pointer_list(context->userpointer);
             }
-            else if (interaction.type == changed){
-                playint_Context_mode_keyslinks_change_at(context, int mode_id, interaction.id_pressed, context->todolist.new_function_linked_array[i]);
+            else{
+                context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_actions_linked;
             }
         }
     }
     else{
         for (i = context->todolist.idstart; i < context->todolist.cap ; i++){
-            interaction = context->todolist.interaction_array[i];
-
-            if (interaction.type == activated){
-                id_action = context->keyslinks[interaction.id_pressed];
+            interaction = context->todolist.interaction_array[context->todolist.idstart];
+    
+            if (interaction.new_actions_linked < 0){
+                id_action = context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed];
                 context->function_array[id_action].function_pointer_list(context->userpointer);
             }
-            else if (interaction.type == changed){
-                playint_Context_mode_keyslinks_change_at(context, int mode_id, interaction.id_pressed, context->todolist.new_function_linked_array[i]);
+            else{
+                context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_actions_linked;
             }
         }
         for (i = 0; i < context->todolist.idnext ; i++){
-            interaction = context->todolist.interaction_array[i];
-
-            if (interaction.type == activated){
-                id_action = context->keyslinks[interaction.id_pressed];
+            interaction = context->todolist.interaction_array[context->todolist.idstart];
+    
+            if (interaction.new_actions_linked < 0){
+                id_action = context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed];
                 context->function_array[id_action].function_pointer_list(context->userpointer);
             }
-            else if (interaction.type == changed){
-                playint_Context_mode_keyslinks_change_at(context, int mode_id, interaction.id_pressed, context->todolist.new_function_linked_array[i]);
+            else{
+                context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_actions_linked;
             }
         }
     }
