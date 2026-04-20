@@ -7,15 +7,10 @@ typedef struct{
     playint_UserFunction function_pointer_list;
 }playint_Function;
 
-enum playint_InteractionType{
-    activated,
-    changed,
-    count
-};
-
 typedef struct {
-    enum playint_InteractionType type;
+    unsigned int mode_number;
     unsigned int id_pressed;
+    unsigned int new_actions_linked; /*only useful when mode == -1*/
 }playint_Interaction;
 
 typedef struct {
@@ -214,7 +209,7 @@ unsigned int playint_Context_todoarray_get_len(playint_Context *context){
 void playint_Context_todoarray_add(playint_Context *context, int id_pressed){
     context->todolist.interaction_array[context->todolist.idnext].type = context->state;
     context->todolist.interaction_array[context->todolist.idnext].id_pressed = id_pressed;
-    if (context->state == changed){
+    if (context->keybinding == changed){
         context->todolist.new_function_linked_array[context->todolist.idnext] = context->keybinding;
     }
 
