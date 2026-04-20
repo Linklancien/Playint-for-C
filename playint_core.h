@@ -10,8 +10,8 @@ void playint_Context_set_from(void *context, char *path);
 /* not implemented yet */
 void playint_Context_save_to(void *context, char *path);
 void playint_Context_free(void *context);
-bool playint_Context_keybinding_get(void *context);
-void playint_Context_keybinding_set(void *context, bool );
+unsigned int playint_Context_keybinding_get(void *context);
+void playint_Context_keybinding_set(void *context, unsigned int new_keybinding);
 void playint_Context_change_userpointer(void *context, void *userpointer);
 
 /* actions */

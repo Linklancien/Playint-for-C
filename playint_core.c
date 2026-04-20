@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 typedef void(*playint_UserFunction)(void*) ;
 
@@ -10,7 +9,7 @@ typedef struct{
 typedef struct {
     unsigned int mode_number;
     unsigned int id_pressed;
-    unsigned int new_actions_linked; /*if < 0 this activate the associated fonction*/
+    int new_actions_linked; /*if < 0 this activate the associated fonction*/
 }playint_Interaction;
 
 typedef struct {
@@ -35,7 +34,7 @@ typedef struct{
     unsigned int number_of_keys;
     unsigned int mode_current;
 
-    unsigned int keybinding;
+    int keybinding;
 
     playint_TodoList todolist;
 }playint_Context;
@@ -149,8 +148,12 @@ void playint_Context_number_of_keys_set(playint_Context *context, unsigned int n
 unsigned int playint_Context_mode_keyslinks_get_linked_by_id(playint_Context *context, int mode_id, unsigned int keyslinks_id){
     return context->mode_array[mode_id].keyslinks_array[keyslinks_id];
 }
-unsigned int *playint_Context_mode_keyslinks_get_id_by_linked_id(playint_Context *context, int mode_id, unsigned int linked_id);
-unsigned int *playint_Context_mode_keyslinks_get_id_by_linked_name(playint_Context *context, int mode_id, char *linked_name);
+unsigned int *playint_Context_mode_keyslinks_get_id_by_linked_id(playint_Context *context, int mode_id, unsigned int linked_id){
+    
+}
+unsigned int *playint_Context_mode_keyslinks_get_id_by_linked_name(playint_Context *context, int mode_id, char *linked_name){
+    
+}
 
 unsigned int playint_Context_mode_current_keyslinks_get_linked_by_id(playint_Context *context, unsigned int keyslinks_id){
     return playint_Context_mode_keyslinks_get_linked_by_id(context, context->mode_current, keyslinks_id);
@@ -240,7 +243,7 @@ void playint_Context_todo_do_all(playint_Context *context){
     if (context->todolist.idstart < context->todolist.idnext){
         for (i = context->todolist.idstart; i < context->todolist.idnext ; i++){
             interaction = context->todolist.interaction_array[context->todolist.idstart];
-    
+
             if (interaction.new_actions_linked < 0){
                 id_action = context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed];
                 context->function_array[id_action].function_pointer_list(context->userpointer);
@@ -253,7 +256,7 @@ void playint_Context_todo_do_all(playint_Context *context){
     else{
         for (i = context->todolist.idstart; i < context->todolist.cap ; i++){
             interaction = context->todolist.interaction_array[context->todolist.idstart];
-    
+
             if (interaction.new_actions_linked < 0){
                 id_action = context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed];
                 context->function_array[id_action].function_pointer_list(context->userpointer);
@@ -264,7 +267,7 @@ void playint_Context_todo_do_all(playint_Context *context){
         }
         for (i = 0; i < context->todolist.idnext ; i++){
             interaction = context->todolist.interaction_array[context->todolist.idstart];
-    
+
             if (interaction.new_actions_linked < 0){
                 id_action = context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed];
                 context->function_array[id_action].function_pointer_list(context->userpointer);
@@ -277,4 +280,11 @@ void playint_Context_todo_do_all(playint_Context *context){
 
     context->todolist.idstart = 0;
     context->todolist.idnext = 0;
+}
+
+void playint_Context_todo_do_all_and_set_cap(playint_Context *context, unsigned int new_cap){
+    playint_Context_todo_do_all(context);
+    
+    context->todolist.cap = new_cap;
+    context->todolist.interaction_array = realloc(context->todolist.interaction_array, (sizeof *context->todolist.interaction_array)*context->todolist.cap);
 }
