@@ -132,6 +132,24 @@ void playint_Context_change_keybinding_by_name(playint_Context *context, char *n
     context->keybinding = playint_Context_action_get_id_by_name(context, name)[0];
 }
 
+/* mode */
+unsigned int playint_Context_mode_get(playint_Context *context){
+    return context->mode_current;
+}
+
+void playint_Context_mode_set(playint_Context *context, unsigned int new_mode){
+    context->mode_current = new_mode;
+}
+
+unsigned int playint_Context_mode_get_len(playint_Context *context){
+    return context->mode_array_len;
+}
+
+void playint_Context_mode_set_len(playint_Context *context, unsigned int new_len){
+    context->mode_array = realloc(context->mode_array, (sizeof *context->mode_array) * new_len);
+    context->mode_array_len = new_len;
+}
+
 /* keyslinks */
 
 unsigned int playint_Context_number_of_keys_get(playint_Context *context){
