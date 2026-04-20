@@ -37,14 +37,15 @@ unsigned int playint_Context_mode_keyslinks_get_linked_by_id(void *context, int 
 unsigned int *playint_Context_mode_keyslinks_get_id_by_linked_id(void *context, int mode_id, unsigned int linked_id);
 unsigned int *playint_Context_mode_keyslinks_get_id_by_linked_name(void *context, int mode_id, char *linked_name);
 
-unsigned int playint_Context_current_mode_keyslinks_get_linked_by_id(void *context, unsigned int keyslinks_id);
-unsigned int *playint_Context_current_mode_keyslinks_get_id_by_linked_id(void *context, unsigned int linked_id);
-unsigned int *playint_Context_current_mode_keyslinks_get_id_by_linked_name(void *context, char *linked_name);
+unsigned int playint_Context_mode_current_keyslinks_get_linked_by_id(void *context, unsigned int keyslinks_id);
+unsigned int *playint_Context_mode_current_keyslinks_get_id_by_linked_id(void *context, unsigned int linked_id);
+unsigned int *playint_Context_mode_current_keyslinks_get_id_by_linked_name(void *context, char *linked_name);
 
 /* todolist */
 
 unsigned int playint_Context_todo_get_len(void *context);
-void playint_Context_todo_add(void *context, int id_pressed);
+void playint_Context_mode_todo_add(void *context, int id_pressed, unsigned int mode_id);
+void playint_Context_mode_current_todo_add(void *context, int id_pressed);
 void playint_Context_todo_do_one(void *context);
 void playint_Context_todo_do_all(void *context);
 void playint_Context_todo_do_all_and_set_cap(void *context, unsigned int new_cap);

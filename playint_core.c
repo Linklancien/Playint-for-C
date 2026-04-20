@@ -10,7 +10,7 @@ typedef struct{
 typedef struct {
     unsigned int mode_number;
     unsigned int id_pressed;
-    unsigned int new_actions_linked; /*only useful when mode == -1*/
+    unsigned int new_actions_linked; /*if < 0 this activate the associated fonction*/
 }playint_Interaction;
 
 typedef struct {
@@ -34,7 +34,7 @@ typedef struct{
     playint_Mode *mode_array;
     unsigned int mode_array_len;
     unsigned int number_of_keys;
-    unsigned int current_mode;
+    unsigned int mode_current;
 
     unsigned int keybinding;
 
@@ -154,23 +154,23 @@ unsigned int playint_Context_mode_keyslinks_get_linked_by_id(playint_Context *co
 unsigned int *playint_Context_mode_keyslinks_get_id_by_linked_id(playint_Context *context, int mode_id, unsigned int linked_id);
 unsigned int *playint_Context_mode_keyslinks_get_id_by_linked_name(playint_Context *context, int mode_id, char *linked_name);
 
-unsigned int playint_Context_current_mode_keyslinks_get_linked_by_id(playint_Context *context, unsigned int keyslinks_id){
-    return playint_Context_mode_keyslinks_get_linked_by_id(context, context->current_mode, keyslinks_id);
+unsigned int playint_Context_mode_current_keyslinks_get_linked_by_id(playint_Context *context, unsigned int keyslinks_id){
+    return playint_Context_mode_keyslinks_get_linked_by_id(context, context->mode_current, keyslinks_id);
 }
 
-unsigned int *playint_Context_current_mode_keyslinks_get_id_by_linked_id(playint_Context *context, unsigned int linked_id){
-    return playint_Context_mode_keyslinks_get_id_by_linked_id(context, context->current_mode, linked_id);
+unsigned int *playint_Context_mode_current_keyslinks_get_id_by_linked_id(playint_Context *context, unsigned int linked_id){
+    return playint_Context_mode_keyslinks_get_id_by_linked_id(context, context->mode_current, linked_id);
 }
 
-unsigned int *playint_Context_current_mode_keyslinks_get_id_by_linked_name(playint_Context *context, char *linked_name){
-    return playint_Context_mode_keyslinks_get_id_by_linked_name(context, context->current_mode, linked_name);
+unsigned int *playint_Context_mode_current_keyslinks_get_id_by_linked_name(playint_Context *context, char *linked_name){
+    return playint_Context_mode_keyslinks_get_id_by_linked_name(context, context->mode_current, linked_name);
 }
 
 
 /* todolist */
 
 /* local */
-void playint_Context_todoarray_change_idnext(playint_Context *context){
+void playint_Context_todo_change_idnext(playint_Context *context){
     unsigned long old_cap;
     unsigned int i;
 
@@ -195,7 +195,7 @@ void playint_Context_todoarray_change_idnext(playint_Context *context){
     context->todolist.idnext += 1;
 }
 
-unsigned int playint_Context_todoarray_get_len(playint_Context *context){
+unsigned int playint_Context_todo_get_len(playint_Context *context){
     unsigned int len;
     if (context->todolist.idstart <= context->todolist.idnext){
         len = context->todolist.idnext - context->todolist.idstart;
@@ -206,17 +206,17 @@ unsigned int playint_Context_todoarray_get_len(playint_Context *context){
     return len;
 }
 
-void playint_Context_todoarray_add(playint_Context *context, int id_pressed){
+void playint_Context_mode_todo_add(playint_Context *context, int id_pressed, unsigned int mode_id){
     context->todolist.interaction_array[context->todolist.idnext].type = context->state;
     context->todolist.interaction_array[context->todolist.idnext].id_pressed = id_pressed;
     if (context->keybinding == changed){
         context->todolist.new_function_linked_array[context->todolist.idnext] = context->keybinding;
     }
 
-    playint_Context_todoarray_change_idnext(context);
+    playint_Context_todo_change_idnext(context);
 }
 
-void playint_Context_todoarray_do_one(playint_Context *context){
+void playint_Context_todo_do_one(playint_Context *context){
     playint_Interaction interaction;
     unsigned int id_action;
 
@@ -234,7 +234,7 @@ void playint_Context_todoarray_do_one(playint_Context *context){
     }
 }
 
-void playint_Context_todoarray_do_all(playint_Context *context){
+void playint_Context_todo_do_all(playint_Context *context){
     playint_Interaction interaction;
     unsigned int id_action;
     unsigned int i;
