@@ -42,9 +42,9 @@ typedef struct{
 /* playint context */
 
 void *playint_Context_init(void *userpointer, unsigned int keyslinks_len, unsigned int todolist_cap, unsigned int mode_len){
-    unsigned int *new_function_linked_array;
-    playint_Context *context;
     playint_Interaction *interaction_array;
+    unsigned int i;
+    playint_Context *context;
     playint_Mode *mode_array;
 
     context = malloc((sizeof( *context)*1));
@@ -52,7 +52,10 @@ void *playint_Context_init(void *userpointer, unsigned int keyslinks_len, unsign
 
     mode_array = malloc((sizeof *mode_array)*mode_len);
     interaction_array = malloc((sizeof *interaction_array)*todolist_cap);
-    new_function_linked_array = malloc((sizeof *new_function_linked_array)*todolist_cap);
+
+    for (i = 0; i < mode_len; i++){
+        mode_array[i].keyslinks_array = malloc((sizeof mode_array[i].keyslinks_array) * keyslinks_len);
+    }
 
     context->userpointer = userpointer;
     context->mode_array = mode_array;
@@ -260,6 +263,7 @@ void playint_Context_mode_todo_add(playint_Context *context, int id_pressed, uns
     context->todolist.interaction_array[context->todolist.idnext].new_function_linked = context->keybinding;
 
     context->keybinding = -1;
+
     playint_Context_todo_change_idnext(context);
 }
 
@@ -292,8 +296,8 @@ void playint_Context_todo_do_all(playint_Context *context){
 
     if (context->todolist.idstart < context->todolist.idnext){
         for (i = context->todolist.idstart; i < context->todolist.idnext ; i++){
-            interaction = context->todolist.interaction_array[context->todolist.idstart];
-
+            interaction = context->todolist.interaction_array[i];
+            
             if (interaction.new_function_linked < 0){
                 id_action = context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed];
                 context->function_array[id_action].function_pointer_list(context->userpointer);
@@ -305,7 +309,7 @@ void playint_Context_todo_do_all(playint_Context *context){
     }
     else{
         for (i = context->todolist.idstart; i < context->todolist.cap ; i++){
-            interaction = context->todolist.interaction_array[context->todolist.idstart];
+            interaction = context->todolist.interaction_array[i];
 
             if (interaction.new_function_linked < 0){
                 id_action = context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed];
@@ -316,7 +320,7 @@ void playint_Context_todo_do_all(playint_Context *context){
             }
         }
         for (i = 0; i < context->todolist.idnext ; i++){
-            interaction = context->todolist.interaction_array[context->todolist.idstart];
+            interaction = context->todolist.interaction_array[i];
 
             if (interaction.new_function_linked < 0){
                 id_action = context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed];
