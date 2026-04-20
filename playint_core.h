@@ -2,7 +2,7 @@ typedef void(*playint_UserFunction)(void*) ;
 
 /* playint context */
 
-void *playint_Context_init(void *userpointer, unsigned int keyslinks_len, unsigned int todolist_cap);
+void *playint_Context_init(void *userpointer, unsigned int keyslinks_len, unsigned int todoarray_cap);
 void *playint_Context_init_from(char *path);
 void playint_Context_set_from(void *context, char *path);
 void playint_Context_save_to(void *context, char *path);
@@ -29,7 +29,7 @@ unsigned int *playint_Context_keyslinks_get_id_by_linked_name(void *context, cha
 
 /* todolist */
 
-unsigned int playint_Context_todolist_get_len(void *context);
-void playint_Context_todolist_add(void *context, int id_pressed);
-void playint_Context_todolist_do_one(void *context);
-void playint_Context_todolist_do_all(void *context);
+unsigned int playint_Context_todoarray_get_len(void *context);
+void playint_Context_todoarray_add(void *context, int id_pressed);
+void playint_Context_todoarray_do_one(void *context);
+void playint_Context_todoarray_do_all(void *context);
