@@ -19,13 +19,16 @@ unsigned int *playint_Context_action_get_id_by_name(void *context, char *name);
 void playint_Context_change_action_to_link_by_id(void *context, unsigned int id_action_to_link);
 void playint_Context_change_action_to_link_by_name(void *context, char *name);
 
+/* mode */
+void playint_Context_mode_(void *context);
+
 /* keyslinks */
 
-void playint_Context_keyslinks_len_set(void *context, unsigned int keyslinks_len);
-void playint_Context_keyslinks_change_all(void *context);
-unsigned int playint_Context_keyslinks_get_linked_by_id(void *context, unsigned int keyslinks_id);
-unsigned int *playint_Context_keyslinks_get_id_by_linked_id(void *context, unsigned int linked_id);
-unsigned int *playint_Context_keyslinks_get_id_by_linked_name(void *context, char *linked_name);
+void playint_Context_mode_keyslinks_len_set(void *context, int mode_id, unsigned int keyslinks_len);
+void playint_Context_mode_keyslinks_change_all(void *context, int mode_id);
+unsigned int playint_Context_mode_keyslinks_get_linked_by_id(void *context, int mode_id, unsigned int keyslinks_id);
+unsigned int *playint_Context_mode_keyslinks_get_id_by_linked_id(void *context, int mode_id, unsigned int linked_id);
+unsigned int *playint_Context_mode_keyslinks_get_id_by_linked_name(void *context, int mode_id, char *linked_name);
 
 /* todolist */
 
