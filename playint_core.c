@@ -15,7 +15,6 @@ typedef struct {
 
 typedef struct {
 	playint_Interaction *interaction_array; /* state/id */
-	unsigned int *new_function_linked_array;
 	unsigned int idstart;
 	unsigned int idnext;
 	unsigned long cap;
@@ -60,7 +59,6 @@ void *playint_Context_init(void *userpointer, unsigned int keyslinks_len, unsign
     context->mode_array = mode_array;
     context->mode_array_len = mode_len;
     context->todolist.interaction_array = interaction_array;
-    context->todolist.new_function_linked_array = new_function_linked_array;
     context->todolist.cap = todolist_cap;
 
     return context;
@@ -207,13 +205,16 @@ unsigned int playint_Context_todo_get_len(playint_Context *context){
 }
 
 void playint_Context_mode_todo_add(playint_Context *context, int id_pressed, unsigned int mode_id){
-    context->todolist.interaction_array[context->todolist.idnext].type = context->state;
+    context->todolist.interaction_array[context->todolist.idnext].mode_number = mode_id;
     context->todolist.interaction_array[context->todolist.idnext].id_pressed = id_pressed;
-    if (context->keybinding == changed){
-        context->todolist.new_function_linked_array[context->todolist.idnext] = context->keybinding;
-    }
+    context->todolist.interaction_array[context->todolist.idnext].new_actions_linked = context->keybinding;
 
+    context->keybinding = -1;
     playint_Context_todo_change_idnext(context);
+}
+
+void playint_Context_mode_current_todo_add(playint_Context *context, int id_pressed){
+    playint_Context_mode_todo_add(context, id_pressed, context->mode_current);
 }
 
 void playint_Context_todo_do_one(playint_Context *context){
