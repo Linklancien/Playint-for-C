@@ -148,11 +148,39 @@ void playint_Context_number_of_keys_set(playint_Context *context, unsigned int n
 unsigned int playint_Context_mode_keyslinks_get_linked_by_id(playint_Context *context, int mode_id, unsigned int keyslinks_id){
     return context->mode_array[mode_id].keyslinks_array[keyslinks_id];
 }
+
 unsigned int *playint_Context_mode_keyslinks_get_id_by_linked_id(playint_Context *context, int mode_id, unsigned int linked_id){
-    
+    unsigned int i;
+    unsigned int *ids;
+
+    ids = malloc((sizeof *ids)*1);
+    for (i = 0; i < context->number_of_keys; i++){
+        if (context->mode_array[mode_id].keyslinks_array[i] == linked_id){
+            ids[0] += 1;
+            ids = realloc(ids, (sizeof *ids )*(ids[0] + 1));
+            ids[ids[0]] = i;
+        }
+    }
+
+    return ids;
 }
+
 unsigned int *playint_Context_mode_keyslinks_get_id_by_linked_name(playint_Context *context, int mode_id, char *linked_name){
-    
+    unsigned int i;
+    unsigned int *ids;
+    unsigned int linked_id;
+
+    ids = malloc((sizeof *ids)*1);
+    for (i = 0; i < context->number_of_keys; i++){
+        linked_id = context->mode_array[mode_id].keyslinks_array[i];
+        if (context->function_array[linked_id].name == linked_name){
+            ids[0] += 1;
+            ids = realloc(ids, (sizeof *ids )*(ids[0] + 1));
+            ids[ids[0]] = i;
+        }
+    }
+
+    return ids;
 }
 
 unsigned int playint_Context_mode_current_keyslinks_get_linked_by_id(playint_Context *context, unsigned int keyslinks_id){
@@ -284,7 +312,7 @@ void playint_Context_todo_do_all(playint_Context *context){
 
 void playint_Context_todo_do_all_and_set_cap(playint_Context *context, unsigned int new_cap){
     playint_Context_todo_do_all(context);
-    
+
     context->todolist.cap = new_cap;
     context->todolist.interaction_array = realloc(context->todolist.interaction_array, (sizeof *context->todolist.interaction_array)*context->todolist.cap);
 }
