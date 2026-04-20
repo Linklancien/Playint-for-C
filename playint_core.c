@@ -29,7 +29,7 @@ typedef struct {
 typedef struct{
     void *userpointer; /* the pointer used to call the user functions */
     enum playint_InteractionType state;
-    playint_Actions *actions;
+    playint_Actions *array_actions;
     unsigned int actions_len;
     unsigned int action_to_link;
     unsigned int *keyslinks;
@@ -65,7 +65,7 @@ void playint_Context_save_to(playint_Context *context, char *path);
 
 void playint_Context_free(playint_Context *context){
     free(context->userpointer);
-    free(context->actions);
+    free(context->array_actions);
     free(context->keyslinks);
     free(context->todolist.array_interaction);
     free(context);
@@ -86,9 +86,9 @@ void playint_Context_change_userpointer(playint_Context *context, void *userpoin
 /* actions */
 
 void playint_Context_action_add(playint_Context *context, char *name, playint_UserFunction function_pointer){
-    context->actions = realloc(context->actions, sizeof(*context->actions)*context->actions_len);
-    context->actions[context->actions_len].name = name;
-    context->actions[context->actions_len].function_pointer_list = function_pointer;
+    context->array_actions = realloc(context->array_actions, sizeof(*context->array_actions)*context->actions_len);
+    context->array_actions[context->actions_len].name = name;
+    context->array_actions[context->actions_len].function_pointer_list = function_pointer;
     context->actions_len += 1;
 }
 
@@ -96,7 +96,7 @@ char *playint_Context_action_get_name_by_id(playint_Context *context, unsigned i
     if (context->actions_len <=id){
         return 0;
     }
-    return context->actions[id].name;
+    return context->array_actions[id].name;
 }
 
 unsigned int *playint_Context_action_get_id_by_name(playint_Context *context, char *name){
@@ -105,7 +105,7 @@ unsigned int *playint_Context_action_get_id_by_name(playint_Context *context, ch
     unsigned int *ids;
 
     for (i=0; i < context->actions_len ; i ++ ){
-        if (context->actions[i].name == name){
+        if (context->array_actions[i].name == name){
             current_id += 1;
             ids = realloc(ids, current_id);
             ids[current_id] = i;
@@ -125,21 +125,21 @@ void playint_Context_change_action_to_link_by_name(playint_Context *context, cha
 
 /* keyslinks */
 
-void playint_Context_keyslinks_len_set(playint_Context *context, unsigned int keyslinks_len){
+void playint_Context_mode_keyslinks_len_set(playint_Context *context, int mode_id, unsigned int keyslinks_len){
     context->keyslinks = realloc(context->keyslinks, keyslinks_len);
     context->keyslinks_len = keyslinks_len;
 }
 
-void playint_Context_keyslinks_change_at(playint_Context *context, unsigned int keyslinks_id, unsigned int new_action_linked_id){
+void playint_Context_mode_keyslinks_change_at(playint_Context *context, int mode_id, unsigned int keyslinks_id, unsigned int new_action_linked_id){
     context->keyslinks[keyslinks_id] = new_action_linked_id;
 }
 
-unsigned int playint_Context_keyslinks_get_linked_by_id(playint_Context *context, unsigned int keyslinks_id){
+unsigned int playint_Context_mode_keyslinks_get_linked_by_id(playint_Context *context, int mode_id, unsigned int keyslinks_id){
     return context->keyslinks[keyslinks_id];
 }
 
-unsigned int *playint_Context_keyslinks_get_id_by_linked_id(playint_Context *context, unsigned int linked_id);
-unsigned int *playint_Context_keyslinks_get_id_by_linked_name(playint_Context *context, char *linked_name);
+unsigned int *playint_Context_mode_keyslinks_get_id_by_linked_id(playint_Context *context, int mode_id, unsigned int linked_id);
+unsigned int *playint_Context_mode_keyslinks_get_id_by_linked_name(playint_Context *context, int mode_id, char *linked_name);
 
 /* todolist */
 
@@ -199,10 +199,10 @@ void playint_Context_todoarray_do_one(playint_Context *context){
 
         if (interaction.type == activated){
             id_action = context->keyslinks[interaction.id_pressed];
-            context->actions[id_action].function_pointer_list(context->userpointer);
+            context->array_actions[id_action].function_pointer_list(context->userpointer);
         }
         else if (interaction.type == changed){
-            playint_Context_keyslinks_change_at(context, interaction.id_pressed, context->todolist.array_new_actions_linked[context->todolist.idstart]);
+            playint_Context_mode_keyslinks_change_at(context, int mode_id, interaction.id_pressed, context->todolist.array_new_actions_linked[context->todolist.idstart]);
         }
         context->todolist.idstart += 1;
     }
@@ -219,10 +219,10 @@ void playint_Context_todoarray_do_all(playint_Context *context){
 
             if (interaction.type == activated){
                 id_action = context->keyslinks[interaction.id_pressed];
-                context->actions[id_action].function_pointer_list(context->userpointer);
+                context->array_actions[id_action].function_pointer_list(context->userpointer);
             }
             else if (interaction.type == changed){
-                playint_Context_keyslinks_change_at(context, interaction.id_pressed, context->todolist.array_new_actions_linked[i]);
+                playint_Context_mode_keyslinks_change_at(context, int mode_id, interaction.id_pressed, context->todolist.array_new_actions_linked[i]);
             }
         }
     }
@@ -232,10 +232,10 @@ void playint_Context_todoarray_do_all(playint_Context *context){
 
             if (interaction.type == activated){
                 id_action = context->keyslinks[interaction.id_pressed];
-                context->actions[id_action].function_pointer_list(context->userpointer);
+                context->array_actions[id_action].function_pointer_list(context->userpointer);
             }
             else if (interaction.type == changed){
-                playint_Context_keyslinks_change_at(context, interaction.id_pressed, context->todolist.array_new_actions_linked[i]);
+                playint_Context_mode_keyslinks_change_at(context, int mode_id, interaction.id_pressed, context->todolist.array_new_actions_linked[i]);
             }
         }
         for (i = 0; i < context->todolist.idnext ; i++){
@@ -243,10 +243,10 @@ void playint_Context_todoarray_do_all(playint_Context *context){
 
             if (interaction.type == activated){
                 id_action = context->keyslinks[interaction.id_pressed];
-                context->actions[id_action].function_pointer_list(context->userpointer);
+                context->array_actions[id_action].function_pointer_list(context->userpointer);
             }
             else if (interaction.type == changed){
-                playint_Context_keyslinks_change_at(context, interaction.id_pressed, context->todolist.array_new_actions_linked[i]);
+                playint_Context_mode_keyslinks_change_at(context, int mode_id, interaction.id_pressed, context->todolist.array_new_actions_linked[i]);
             }
         }
     }
