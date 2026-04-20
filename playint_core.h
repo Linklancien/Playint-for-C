@@ -14,13 +14,13 @@ unsigned int playint_Context_keybinding_get(void *context);
 void playint_Context_keybinding_set(void *context, unsigned int new_keybinding);
 void playint_Context_change_userpointer(void *context, void *userpointer);
 
-/* actions */
+/* functions */
 
-void playint_Context_action_add(void *context, char *name, playint_UserFunction function_pointer);
-char *playint_Context_action_get_name_by_id(void *context, unsigned int id);
-unsigned int *playint_Context_action_get_id_by_name(void *context, char *name);
-void playint_Context_change_action_to_link_by_id(void *context, unsigned int id_action_to_link);
-void playint_Context_change_action_to_link_by_name(void *context, char *name);
+void playint_Context_function_add(void *context, char *name, playint_UserFunction function_pointer);
+char *playint_Context_function_get_name_by_id(void *context, unsigned int id);
+unsigned int *playint_Context_function_get_id_by_name(void *context, char *name);
+void playint_Context_change_keybinding_by_id(void *context, unsigned int id_function_to_link);
+void playint_Context_change_keybinding_by_name(void *context, char *name);
 
 /* mode */
 unsigned int playint_Context_mode_get(void *context);

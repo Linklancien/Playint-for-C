@@ -9,7 +9,7 @@ typedef struct{
 typedef struct {
     unsigned int mode_number;
     unsigned int id_pressed;
-    int new_actions_linked; /*if < 0 this activate the associated fonction*/
+    int new_function_linked; /*if < 0 this activate the associated fonction*/
 }playint_Interaction;
 
 typedef struct {
@@ -94,21 +94,21 @@ void playint_Context_change_userpointer(playint_Context *context, void *userpoin
 
 /* function */
 
-void playint_Context_action_add(playint_Context *context, char *name, playint_UserFunction function_pointer){
+void playint_Context_function_add(playint_Context *context, char *name, playint_UserFunction function_pointer){
     context->function_array = realloc(context->function_array, sizeof(*context->function_array)*context->function_array_len);
     context->function_array[context->function_array_len].name = name;
     context->function_array[context->function_array_len].function_pointer_list = function_pointer;
     context->function_array_len += 1;
 }
 
-char *playint_Context_action_get_name_by_id(playint_Context *context, unsigned int id){
+char *playint_Context_function_get_name_by_id(playint_Context *context, unsigned int id){
     if (context->function_array_len <=id){
         return 0;
     }
     return context->function_array[id].name;
 }
 
-unsigned int *playint_Context_action_get_id_by_name(playint_Context *context, char *name){
+unsigned int *playint_Context_function_get_id_by_name(playint_Context *context, char *name){
     unsigned int i;
     unsigned int current_id;
     unsigned int *ids;
@@ -129,7 +129,11 @@ void playint_Context_change_keybinding_by_id(playint_Context *context, unsigned 
 }
 
 void playint_Context_change_keybinding_by_name(playint_Context *context, char *name){
-    context->keybinding = playint_Context_action_get_id_by_name(context, name)[0];
+    unsigned int *list;
+    list = playint_Context_function_get_id_by_name(context, name);
+    if (list[0] > 0){
+        context->keybinding = list [1];
+    }
 }
 
 /* mode */
@@ -253,7 +257,7 @@ unsigned int playint_Context_todo_get_len(playint_Context *context){
 void playint_Context_mode_todo_add(playint_Context *context, int id_pressed, unsigned int mode_id){
     context->todolist.interaction_array[context->todolist.idnext].mode_number = mode_id;
     context->todolist.interaction_array[context->todolist.idnext].id_pressed = id_pressed;
-    context->todolist.interaction_array[context->todolist.idnext].new_actions_linked = context->keybinding;
+    context->todolist.interaction_array[context->todolist.idnext].new_function_linked = context->keybinding;
 
     context->keybinding = -1;
     playint_Context_todo_change_idnext(context);
@@ -270,12 +274,12 @@ void playint_Context_todo_do_one(playint_Context *context){
     if (context->todolist.idstart != context->todolist.idnext){
         interaction = context->todolist.interaction_array[context->todolist.idstart];
 
-        if (interaction.new_actions_linked < 0){
+        if (interaction.new_function_linked < 0){
             id_action = context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed];
             context->function_array[id_action].function_pointer_list(context->userpointer);
         }
         else{
-            context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_actions_linked;
+            context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_function_linked;
         }
         context->todolist.idstart += 1;
     }
@@ -290,12 +294,12 @@ void playint_Context_todo_do_all(playint_Context *context){
         for (i = context->todolist.idstart; i < context->todolist.idnext ; i++){
             interaction = context->todolist.interaction_array[context->todolist.idstart];
 
-            if (interaction.new_actions_linked < 0){
+            if (interaction.new_function_linked < 0){
                 id_action = context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed];
                 context->function_array[id_action].function_pointer_list(context->userpointer);
             }
             else{
-                context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_actions_linked;
+                context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_function_linked;
             }
         }
     }
@@ -303,23 +307,23 @@ void playint_Context_todo_do_all(playint_Context *context){
         for (i = context->todolist.idstart; i < context->todolist.cap ; i++){
             interaction = context->todolist.interaction_array[context->todolist.idstart];
 
-            if (interaction.new_actions_linked < 0){
+            if (interaction.new_function_linked < 0){
                 id_action = context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed];
                 context->function_array[id_action].function_pointer_list(context->userpointer);
             }
             else{
-                context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_actions_linked;
+                context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_function_linked;
             }
         }
         for (i = 0; i < context->todolist.idnext ; i++){
             interaction = context->todolist.interaction_array[context->todolist.idstart];
 
-            if (interaction.new_actions_linked < 0){
+            if (interaction.new_function_linked < 0){
                 id_action = context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed];
                 context->function_array[id_action].function_pointer_list(context->userpointer);
             }
             else{
-                context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_actions_linked;
+                context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_function_linked;
             }
         }
     }
