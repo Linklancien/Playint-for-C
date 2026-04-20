@@ -30,16 +30,16 @@ void playint_Context_mode_set_len(void *context, unsigned int new_len);
 
 /* keyslinks */
 
-void playint_Context_mode_keyslinks_len_get(void *context, unsigned int keyslinks_len);
-void playint_Context_mode_keyslinks_len_set(void *context, unsigned int keyslinks_len);
-
-unsigned int playint_Context_current_mode_keyslinks_get_linked_by_id(void *context, unsigned int keyslinks_id);
-unsigned int *playint_Context_current_mode_keyslinks_get_id_by_linked_id(void *context, unsigned int linked_id);
-unsigned int *playint_Context_current_mode_keyslinks_get_id_by_linked_name(void *context, char *linked_name);
+unsigned int playint_Context_keyslinks_len_get(void *context);
+void playint_Context_keyslinks_len_set(void *context, unsigned int new_number_of_keys);
 
 unsigned int playint_Context_mode_keyslinks_get_linked_by_id(void *context, int mode_id, unsigned int keyslinks_id);
 unsigned int *playint_Context_mode_keyslinks_get_id_by_linked_id(void *context, int mode_id, unsigned int linked_id);
 unsigned int *playint_Context_mode_keyslinks_get_id_by_linked_name(void *context, int mode_id, char *linked_name);
+
+unsigned int playint_Context_current_mode_keyslinks_get_linked_by_id(void *context, unsigned int keyslinks_id);
+unsigned int *playint_Context_current_mode_keyslinks_get_id_by_linked_id(void *context, unsigned int linked_id);
+unsigned int *playint_Context_current_mode_keyslinks_get_id_by_linked_name(void *context, char *linked_name);
 
 /* todolist */
 
