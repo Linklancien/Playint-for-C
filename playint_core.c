@@ -43,13 +43,15 @@ typedef struct{
 
 void *playint_Context_init(void *userpointer, unsigned int keyslinks_len, unsigned int todolist_cap, unsigned int mode_len){
     playint_Interaction *interaction_array;
-    unsigned int i;
+    playint_Function *function_array;
     playint_Context *context;
     playint_Mode *mode_array;
+    unsigned int i;
 
     context = malloc((sizeof( *context)*1));
     context->number_of_keys = keyslinks_len;
 
+    function_array = malloc((sizeof *function_array)*1);
     mode_array = malloc((sizeof *mode_array)*mode_len);
     interaction_array = malloc((sizeof *interaction_array)*todolist_cap);
 
@@ -280,10 +282,12 @@ void playint_Context_todo_do_one(playint_Context *context){
 
         if (interaction.new_function_linked < 0){
             id_action = context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed];
-            context->function_array[id_action].function_pointer_list(context->userpointer);
+            if (id_action > 0){
+                context->function_array[id_action-1].function_pointer_list(context->userpointer);
+            }
         }
         else{
-            context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_function_linked;
+            context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_function_linked + 1;
         }
         context->todolist.idstart += 1;
     }
@@ -297,13 +301,15 @@ void playint_Context_todo_do_all(playint_Context *context){
     if (context->todolist.idstart < context->todolist.idnext){
         for (i = context->todolist.idstart; i < context->todolist.idnext ; i++){
             interaction = context->todolist.interaction_array[i];
-            
+
             if (interaction.new_function_linked < 0){
                 id_action = context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed];
-                context->function_array[id_action].function_pointer_list(context->userpointer);
+                if (id_action > 0){
+                    context->function_array[id_action-1].function_pointer_list(context->userpointer);
+                }
             }
             else{
-                context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_function_linked;
+                context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_function_linked+1;
             }
         }
     }
@@ -313,10 +319,12 @@ void playint_Context_todo_do_all(playint_Context *context){
 
             if (interaction.new_function_linked < 0){
                 id_action = context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed];
-                context->function_array[id_action].function_pointer_list(context->userpointer);
+                if (id_action > 0){
+                    context->function_array[id_action-1].function_pointer_list(context->userpointer);
+                }
             }
             else{
-                context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_function_linked;
+                context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_function_linked+1;
             }
         }
         for (i = 0; i < context->todolist.idnext ; i++){
@@ -324,10 +332,12 @@ void playint_Context_todo_do_all(playint_Context *context){
 
             if (interaction.new_function_linked < 0){
                 id_action = context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed];
-                context->function_array[id_action].function_pointer_list(context->userpointer);
+                if (id_action > 0){
+                    context->function_array[id_action-1].function_pointer_list(context->userpointer);
+                }
             }
             else{
-                context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_function_linked;
+                context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_function_linked+1;
             }
         }
     }
