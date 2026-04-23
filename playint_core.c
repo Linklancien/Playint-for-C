@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 typedef void(*playint_UserFunction)(void*) ;
 
@@ -27,7 +28,7 @@ typedef struct{
     void *userpointer; /* the pointer used to call the user functions */
 
     playint_Function *function_array;
-    unsigned int function_array_len;
+    unsigned long function_array_len;
 
     playint_Mode *mode_array;
     unsigned int mode_array_len;
@@ -64,6 +65,7 @@ void *playint_Context_init(void *userpointer, unsigned int keyslinks_len, unsign
     context->mode_array_len = mode_len;
     context->todolist.interaction_array = interaction_array;
     context->todolist.cap = todolist_cap;
+    context->keybinding = -1;
 
     return context;
 }
@@ -100,10 +102,10 @@ void playint_Context_change_userpointer(playint_Context *context, void *userpoin
 /* function */
 
 void playint_Context_function_add(playint_Context *context, char *name, playint_UserFunction function_pointer){
-    context->function_array = realloc(context->function_array, sizeof(*context->function_array)*context->function_array_len);
-    context->function_array[context->function_array_len].name = name;
-    context->function_array[context->function_array_len].function_pointer_list = function_pointer;
     context->function_array_len += 1;
+    context->function_array = realloc(context->function_array, (sizeof *context->function_array)*context->function_array_len);
+    context->function_array[context->function_array_len - 1].name = name;
+    context->function_array[context->function_array_len - 1].function_pointer_list = function_pointer;
 }
 
 char *playint_Context_function_get_name_by_id(playint_Context *context, unsigned int id){
@@ -129,11 +131,11 @@ unsigned int *playint_Context_function_get_id_by_name(playint_Context *context, 
     return ids;
 }
 
-void playint_Context_change_keybinding_by_id(playint_Context *context, unsigned int id_keybinding){
+void playint_Context_set_keybinding_by_id(playint_Context *context, unsigned int id_keybinding){
     context->keybinding = id_keybinding;
 }
 
-void playint_Context_change_keybinding_by_name(playint_Context *context, char *name){
+void playint_Context_set_keybinding_by_name(playint_Context *context, char *name){
     unsigned int *list;
     list = playint_Context_function_get_id_by_name(context, name);
     if (list[0] > 0){
@@ -231,9 +233,21 @@ void playint_Context_todo_change_idnext(playint_Context *context){
     unsigned int i;
 
     if (context->todolist.idnext + 1 == context->todolist.cap){
-        context->todolist.cap *= 2 ;
-
+        printf("old cap: %ld \n", context->todolist.cap);
+        fflush(stdout);
+        for (i = 0; i < context->todolist.cap; i++){
+            printf("{id:%i, ",context->todolist.interaction_array[i].id_pressed);
+            printf("mode:%i, ",context->todolist.interaction_array[i].mode_number);
+            printf("fn:%i}, ",context->todolist.interaction_array[i].new_function_linked);
+        }
+        printf("\n");
+        fflush(stdout);
+        context->todolist.cap *= 2;
+        printf("realloc with: caps:%ld, sizeof:%ld, prod:%ld \n", context->todolist.cap, (sizeof *context->todolist.interaction_array), (sizeof *context->todolist.interaction_array)*context->todolist.cap);
+        fflush(stdout);
         context->todolist.interaction_array = realloc(context->todolist.interaction_array, (sizeof *context->todolist.interaction_array)*context->todolist.cap);
+        printf("after realloc \n");
+        fflush(stdout);
     }
     else if (context->todolist.idnext + 1 == context->todolist.idstart){
         old_cap = context->todolist.cap;
