@@ -1,5 +1,4 @@
 #include "../../core/playint_core.h"
-#include "../../glfw_glue/playint_glfw_glue_core copy.h"
 #include <stdio.h>
 #include <stdlib.h>
 

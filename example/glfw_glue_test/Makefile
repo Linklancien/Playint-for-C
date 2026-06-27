@@ -9,3 +9,5 @@ all : $(PROG)
 $(PROG): $(MYOBJS)
 	$(CC) $(MYOBJS) $(CFLAGS) -o $(PROG)
 
+clean:
+	rm $(PROG)
