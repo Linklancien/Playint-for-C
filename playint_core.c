@@ -64,6 +64,8 @@ void *playint_Context_init(void *userpointer, unsigned int keyslinks_len, unsign
     context->mode_array = mode_array;
     context->mode_array_len = mode_len;
     context->todolist.interaction_array = interaction_array;
+    context->todolist.idnext = 0;
+    context->todolist.idstart = 0;
     context->todolist.cap = todolist_cap;
     context->keybinding = -1;
 
@@ -317,7 +319,7 @@ void playint_Context_todo_do_all(playint_Context *context){
             }
         }
     }
-    else{
+    else if (context->todolist.idstart > context->todolist.idnext){
         for (i = context->todolist.idstart; i < context->todolist.cap ; i++){
             interaction = context->todolist.interaction_array[i];
 
