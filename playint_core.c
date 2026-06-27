@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 typedef void(*playint_UserFunction)(void*) ;
 
@@ -16,7 +17,7 @@ typedef struct {
 	playint_Interaction *interaction_array; /* state/id */
 	unsigned int idstart;
 	unsigned int idnext;
-	unsigned long cap;
+	unsigned int cap;
 }playint_TodoList;
 
 typedef struct{
@@ -27,7 +28,7 @@ typedef struct{
     void *userpointer; /* the pointer used to call the user functions */
 
     playint_Function *function_array;
-    unsigned long function_array_len;
+    unsigned int function_array_len;
 
     playint_Mode *mode_array;
     unsigned int mode_array_len;
@@ -65,6 +66,8 @@ void *playint_Context_init(void *userpointer, unsigned int keyslinks_len, unsign
     context->todolist.interaction_array = interaction_array;
     context->todolist.cap = todolist_cap;
     context->keybinding = -1;
+
+    context->function_array_len = 0;
 
     return context;
 }
@@ -229,7 +232,7 @@ unsigned int *playint_Context_mode_current_keyslinks_get_id_by_linked_name(playi
 
 /* local */
 void playint_Context_todo_change_idnext(playint_Context *context){
-    unsigned long old_cap;
+    unsigned int old_cap;
     unsigned int i;
 
     if (context->todolist.idnext + 1 == context->todolist.cap){
