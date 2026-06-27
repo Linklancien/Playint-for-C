@@ -9,7 +9,7 @@ typedef struct{
 
 typedef struct {
     unsigned int mode_number;
-    unsigned unsigned int id_pressed;
+    unsigned int id_pressed;
     int new_function_linked; /*if < 0 this activate the associated fonction*/
 }playint_Interaction;
 

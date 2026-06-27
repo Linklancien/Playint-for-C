@@ -5,7 +5,7 @@
 
 /* Initialize the playint Context, `todolist_cap` is expected to be at least 1 */
 void *playint_glfw_glue_Context_init(void *userpointer, unsigned int todolist_cap, unsigned int mode_len){
-    unsigned int keyslinks_len = 300;
+    unsigned int keyslinks_len = 130;
     return playint_Context_init(userpointer, keyslinks_len, todolist_cap, mode_len);
 }
 
