@@ -67,9 +67,9 @@ unsigned int *playint_Context_mode_current_keyslinks_get_id_by_linked_name(void 
 /* returns the len of the todo array */
 unsigned int playint_Context_todo_get_len(void *context);
 /* add an input for the given `mode_id` */
-void playint_Context_mode_todo_add(void *context, int id_pressed, unsigned int mode_id);
+void playint_Context_mode_todo_add(void *context, unsigned int id_pressed, unsigned int mode_id);
 /* add an input for the current mode` */
-void playint_Context_mode_current_todo_add(void *context, int id_pressed);
+void playint_Context_mode_current_todo_add(void *context, unsigned int id_pressed);
 /* execute the first input recorded */
 void playint_Context_todo_do_one(void *context);
 /* execute all the input recorded in chronological order */

@@ -9,7 +9,7 @@ typedef struct{
 
 typedef struct {
     unsigned int mode_number;
-    unsigned int id_pressed;
+    unsigned unsigned int id_pressed;
     int new_function_linked; /*if < 0 this activate the associated fonction*/
 }playint_Interaction;
 
@@ -265,7 +265,7 @@ unsigned int playint_Context_todo_get_len(playint_Context *context){
     return len;
 }
 
-void playint_Context_mode_todo_add(playint_Context *context, int id_pressed, unsigned int mode_id){
+void playint_Context_mode_todo_add(playint_Context *context, unsigned int id_pressed, unsigned int mode_id){
     context->todolist.interaction_array[context->todolist.idnext].mode_number = mode_id;
     context->todolist.interaction_array[context->todolist.idnext].id_pressed = id_pressed;
     context->todolist.interaction_array[context->todolist.idnext].new_function_linked = context->keybinding;
@@ -275,7 +275,7 @@ void playint_Context_mode_todo_add(playint_Context *context, int id_pressed, uns
     playint_Context_todo_change_idnext(context);
 }
 
-void playint_Context_mode_current_todo_add(playint_Context *context, int id_pressed){
+void playint_Context_mode_current_todo_add(playint_Context *context, unsigned int id_pressed){
     playint_Context_mode_todo_add(context, id_pressed, context->mode_current);
 }
 
