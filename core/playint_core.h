@@ -13,9 +13,9 @@ void playint_Context_save_to(void *context, char *path);
 /* free all playint allocation linked to a given context */
 void playint_Context_free(void *context);
 /* return the len of the keybindings */
-unsigned int playint_Context_keybinding_get(void *context);
+unsigned int playint_Context_number_of_keys_get_len(void *context);
 /* set a new len for the keybindings */
-void playint_Context_keybinding_set(void *context, unsigned int new_keybinding);
+void playint_Context_number_of_keys_set_len(void *context, unsigned int new_number_of_keys);
 /* set a new user point which is used by the actions to `userpointer` */
 void playint_Context_change_userpointer(void *context, void *userpointer);
 

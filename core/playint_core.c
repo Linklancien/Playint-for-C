@@ -32,8 +32,8 @@ typedef struct{
 
     playint_Mode *mode_array;
     unsigned int mode_array_len;
-    unsigned int number_of_keys;
     unsigned int mode_current;
+    unsigned int number_of_keys;
 
     int keybinding;
 
@@ -42,27 +42,32 @@ typedef struct{
 
 /* playint context */
 
-void *playint_Context_init(void *userpointer, unsigned int keyslinks_len, unsigned int todolist_cap, unsigned int mode_len){
+void *playint_Context_init(void *userpointer, unsigned int number_of_keys, unsigned int todolist_cap, unsigned int mode_len){
     playint_Interaction *interaction_array;
     playint_Function *function_array;
     playint_Context *context;
     playint_Mode *mode_array;
     unsigned int i;
+    unsigned int j;
 
     context = malloc((sizeof( *context)*1));
-    context->number_of_keys = keyslinks_len;
+    context->number_of_keys = number_of_keys;
 
     function_array = malloc((sizeof *function_array)*1);
     mode_array = malloc((sizeof *mode_array)*mode_len);
     interaction_array = malloc((sizeof *interaction_array)*todolist_cap);
 
     for (i = 0; i < mode_len; i++){
-        mode_array[i].keyslinks_array = malloc((sizeof mode_array[i].keyslinks_array) * keyslinks_len);
+        mode_array[i].keyslinks_array = malloc((sizeof mode_array[i].keyslinks_array) * number_of_keys);
+        for (j = 0 ; j < number_of_keys ; j ++){
+            mode_array[i].keyslinks_array[j] = -1;
+        }
     }
 
     context->userpointer = userpointer;
     context->mode_array = mode_array;
     context->mode_array_len = mode_len;
+    context->mode_current = 0;
     context->todolist.interaction_array = interaction_array;
     context->todolist.idnext = 0;
     context->todolist.idstart = 0;
@@ -91,12 +96,20 @@ void playint_Context_free(playint_Context *context){
     free(context);
 }
 
-unsigned int playint_Context_keybinding_get(playint_Context *context){
-    return context->keybinding;
+
+unsigned int playint_Context_number_of_keys_get_len(playint_Context *context){
+    return context->number_of_keys;
 }
 
-void playint_Context_keybinding_set(playint_Context *context, unsigned int new_keybinding){
-    context->keybinding = new_keybinding;
+void playint_Context_number_of_keys_set_len(playint_Context *context, unsigned int new_number_of_keys){
+    unsigned int i;
+
+    context->number_of_keys = new_number_of_keys;
+
+    for (i = 0; i < context->mode_array_len; i++){
+        context->mode_array[i].keyslinks_array = realloc(context->mode_array[i].keyslinks_array, (sizeof context->mode_array[i].keyslinks_array) * new_number_of_keys);
+    }
+
 }
 
 void playint_Context_change_userpointer(playint_Context *context, void *userpointer){
@@ -303,18 +316,26 @@ void playint_Context_todo_do_all(playint_Context *context){
     playint_Interaction *interaction;
     unsigned int id_action;
     unsigned int i;
-    
 
     if (context->todolist.idstart < context->todolist.idnext){
-        
+
         for (i = context->todolist.idstart; i < context->todolist.idnext ; i++){
-            
+
             interaction = &context->todolist.interaction_array[i];
 
-            if (interaction->new_function_linked < 0){;
-                
+            if (interaction->new_function_linked < 0){
+
+                printf("id pressed : %i\n", interaction->id_pressed);
+                fflush(stdout);
+
                 id_action = context->mode_array[interaction->mode_number].keyslinks_array[interaction->id_pressed];
+
+                printf("id action : %i\n", id_action);
+                fflush(stdout);
+
                 if (id_action > 0){
+                    printf("id action passed : %i\n", id_action);
+                    fflush(stdout);
                     context->function_array[id_action-1].function_pointer_list(context->userpointer);
                 }
             }
