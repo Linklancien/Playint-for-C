@@ -300,50 +300,54 @@ void playint_Context_todo_do_one(playint_Context *context){
 }
 
 void playint_Context_todo_do_all(playint_Context *context){
-    playint_Interaction interaction;
+    playint_Interaction *interaction;
     unsigned int id_action;
     unsigned int i;
+    
 
     if (context->todolist.idstart < context->todolist.idnext){
+        
         for (i = context->todolist.idstart; i < context->todolist.idnext ; i++){
-            interaction = context->todolist.interaction_array[i];
+            
+            interaction = &context->todolist.interaction_array[i];
 
-            if (interaction.new_function_linked < 0){
-                id_action = context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed];
+            if (interaction->new_function_linked < 0){;
+                
+                id_action = context->mode_array[interaction->mode_number].keyslinks_array[interaction->id_pressed];
                 if (id_action > 0){
                     context->function_array[id_action-1].function_pointer_list(context->userpointer);
                 }
             }
             else{
-                context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_function_linked+1;
+                context->mode_array[interaction->mode_number].keyslinks_array[interaction->id_pressed] = interaction->new_function_linked + 1;
             }
         }
     }
     else if (context->todolist.idstart > context->todolist.idnext){
         for (i = context->todolist.idstart; i < context->todolist.cap ; i++){
-            interaction = context->todolist.interaction_array[i];
+            interaction = &context->todolist.interaction_array[i];
 
-            if (interaction.new_function_linked < 0){
-                id_action = context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed];
+            if (interaction->new_function_linked < 0){
+                id_action = context->mode_array[interaction->mode_number].keyslinks_array[interaction->id_pressed];
                 if (id_action > 0){
                     context->function_array[id_action-1].function_pointer_list(context->userpointer);
                 }
             }
             else{
-                context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_function_linked+1;
+                context->mode_array[interaction->mode_number].keyslinks_array[interaction->id_pressed] = interaction->new_function_linked + 1;
             }
         }
         for (i = 0; i < context->todolist.idnext ; i++){
-            interaction = context->todolist.interaction_array[i];
+            interaction = &context->todolist.interaction_array[i];
 
-            if (interaction.new_function_linked < 0){
-                id_action = context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed];
+            if (interaction->new_function_linked < 0){
+                id_action = context->mode_array[interaction->mode_number].keyslinks_array[interaction->id_pressed];
                 if (id_action > 0){
                     context->function_array[id_action-1].function_pointer_list(context->userpointer);
                 }
             }
             else{
-                context->mode_array[interaction.mode_number].keyslinks_array[interaction.id_pressed] = interaction.new_function_linked+1;
+                context->mode_array[interaction->mode_number].keyslinks_array[interaction->id_pressed] = interaction->new_function_linked+1;
             }
         }
     }
