@@ -54,26 +54,27 @@ unsigned int glfw_convert_KEY_macro_to_index(unsigned int KEY_pressed){
         index = 48;
     }
     else if (KEY_pressed > 340){
-        index = index - 340 + 121;
+        index = KEY_pressed - 340 + 121;
     }
     else if (KEY_pressed > 320){
-        index = index - 320 + 104;
+        index = KEY_pressed - 320 + 104;
     }
     else if (KEY_pressed > 290){
-        index = index - 290 + 79;
+        index = KEY_pressed - 290 + 79;
     }
     else if (KEY_pressed > 256){
-        index = index - 256 + 50;
+        index = KEY_pressed - 256 + 50;
     }
     else if (KEY_pressed > 65){
-        index = index - 65 + 18;
+        index = KEY_pressed - 65 + 18;
     }
     else if (KEY_pressed > 44){
-        index = index - 44 + 2;
+        index = KEY_pressed - 44 + 2;
     }
     
     if (index < 0){
         printf("error with index: %i", index);
+        fflush(stdout);
     }
     return index;
 }
