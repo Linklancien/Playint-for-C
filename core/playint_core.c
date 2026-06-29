@@ -380,3 +380,16 @@ void playint_Context_todo_do_all_and_set_cap(playint_Context *context, unsigned 
     context->todolist.cap = new_cap;
     context->todolist.interaction_array = realloc(context->todolist.interaction_array, (sizeof *context->todolist.interaction_array)*context->todolist.cap);
 }
+
+void playint_Context_todo_reset(playint_Context *context){
+    context->todolist.idstart = 0;
+    context->todolist.idnext = 0;
+}
+
+void playint_Context_todo_reset_and_set_cap(playint_Context *context, unsigned int new_cap){
+    context->todolist.idstart = 0;
+    context->todolist.idnext = 0;
+    
+    context->todolist.cap = new_cap;
+    context->todolist.interaction_array = realloc(context->todolist.interaction_array, (sizeof *context->todolist.interaction_array)*context->todolist.cap);
+}

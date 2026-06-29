@@ -76,3 +76,7 @@ void playint_Context_todo_do_one(void *context);
 void playint_Context_todo_do_all(void *context);
 /* execute all the input recorded in chronological order and then resize the todo array to the given `new_cap`, it should be at least 1 */
 void playint_Context_todo_do_all_and_set_cap(void *context, unsigned int new_cap);
+/* reset the todo array */
+void playint_Context_todo_reset(void *context);
+/* reset the todo array and resize it with `new_cap` */
+void playint_Context_todo_reset_and_set_cap(void *context, unsigned int new_cap);
