@@ -84,7 +84,7 @@ void *playint_Context_init(void *userpointer, unsigned int number_of_keys, unsig
     return context;
 }
 
-void *playint_Context_init_from(char *path);
+playint_Context *playint_Context_init_from(char *path);
 void playint_Context_set_from(playint_Context *context, char *path);
 void playint_Context_save_to(playint_Context *context, char *path);
 
@@ -118,7 +118,7 @@ void playint_Context_number_of_keys_set_len(playint_Context *context, unsigned i
 }
 
 void playint_Context_change_userpointer(playint_Context *context, void *userpointer){
-    context->userpointer=userpointer;
+    context->userpointer = userpointer;
 }
 
 /* function */
