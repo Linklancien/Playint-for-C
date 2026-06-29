@@ -1,5 +1,6 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 typedef void(*playint_UserFunction)(void*) ;
 
 typedef struct{
@@ -49,6 +50,7 @@ void *playint_Context_init(void *userpointer, unsigned int number_of_keys, unsig
     playint_Mode *mode_array;
     unsigned int i;
     unsigned int j;
+    unsigned long size = (sizeof mode_array[0].keyslinks_array) * number_of_keys;
 
     context = malloc((sizeof( *context)*1));
     context->number_of_keys = number_of_keys;
@@ -57,11 +59,14 @@ void *playint_Context_init(void *userpointer, unsigned int number_of_keys, unsig
     mode_array = malloc((sizeof *mode_array)*mode_len);
     interaction_array = malloc((sizeof *interaction_array)*todolist_cap);
 
-    for (i = 0; i < mode_len; i++){
-        mode_array[i].keyslinks_array = malloc((sizeof mode_array[i].keyslinks_array) * number_of_keys);
-        for (j = 0 ; j < number_of_keys ; j ++){
-            mode_array[i].keyslinks_array[j] = -1;
-        }
+    mode_array[0].keyslinks_array = malloc(size);
+    for (j = 0 ; j < number_of_keys ; j ++){
+        mode_array[0].keyslinks_array[0] = 0;
+    }
+
+    for (i = 1; i < mode_len; i++){
+        mode_array[i].keyslinks_array = malloc(size);
+        memcpy(mode_array[i].keyslinks_array, mode_array[0].keyslinks_array, size);
     }
 
     context->userpointer = userpointer;
@@ -325,17 +330,9 @@ void playint_Context_todo_do_all(playint_Context *context){
 
             if (interaction->new_function_linked < 0){
 
-                printf("id pressed : %i\n", interaction->id_pressed);
-                fflush(stdout);
-
                 id_action = context->mode_array[interaction->mode_number].keyslinks_array[interaction->id_pressed];
 
-                printf("id action : %i\n", id_action);
-                fflush(stdout);
-
-                if (id_action > 0){
-                    printf("id action passed : %i\n", id_action);
-                    fflush(stdout);
+                if (0 < id_action){
                     context->function_array[id_action-1].function_pointer_list(context->userpointer);
                 }
             }
